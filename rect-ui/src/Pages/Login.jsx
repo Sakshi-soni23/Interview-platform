@@ -42,8 +42,7 @@ const Login = () => {
       setUserId(data.userId);
       setShowOtpInput(true);
       alert("OTP sent to your email 📧");
-      navigate("/dashbaord")
-    } catch (err) {
+      
       alert("Server error ❌");
     } finally {
       setLoading(false);

@@ -48,6 +48,7 @@ export default function Register() {
         setLoading(false);
         return;
       }
+      localStorage.setItem("token", data.token);
 
       alert("Registration successful 🎉");
       navigate("/dashbaord")

@@ -16,7 +16,7 @@ app.get("/", (req, res) => {
     res.send("API running 🚀");
 });
 app.use("/api/auth", Authroute);
-
+ app.use("/uploads",express.static("uploads"));
 
 
 const PORT = process.env.PORT || 5000;
