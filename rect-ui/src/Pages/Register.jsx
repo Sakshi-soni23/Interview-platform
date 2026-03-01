@@ -31,6 +31,8 @@ export default function Register() {
   // ✅ NEW: handle form submit
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+  
     setLoading(true);
     try {
       const res = await fetch("http://localhost:5000/api/auth/register", {
@@ -42,16 +44,17 @@ export default function Register() {
       });
 
       const data = await res.json();
+      
 
       if (!res.ok) {
         alert(data.message || "Registration failed");
         setLoading(false);
         return;
       }
-      localStorage.setItem("token", data.token);
+     
 
       alert("Registration successful 🎉");
-      navigate("/dashbaord")
+      navigate("/login")
      
     } catch (error) {
       alert("Server error ❌");

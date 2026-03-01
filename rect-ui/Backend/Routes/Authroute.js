@@ -1,9 +1,10 @@
 import express from "express";
 import { RegisterUser, loginUser } from "../Controllers/AuthController.js";
 import { verifyOTP } from "../Controllers/Verification.js";
-import createOrUpdateProfile from "../Controllers/ProfileController.js";
+import createOrUpdateProfile, { getProfile } from "../Controllers/ProfileController.js";
 import authMiddleware from "../Middleware/Authmiddleware.js";
 import upload from "../Middleware/multer.js";
+
 
 const router = express.Router();
 
@@ -21,6 +22,6 @@ router.post(
     
     createOrUpdateProfile
 );
-router.get("/getme",)
+router.get("/getprofile",authMiddleware,getProfile)
 
 export default router;

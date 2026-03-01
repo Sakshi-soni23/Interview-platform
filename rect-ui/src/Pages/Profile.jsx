@@ -3,7 +3,10 @@ import Sidebar from "./Sidebar";
 import profile from "../assets/Images/profie.jpg";
 import { useState } from "react";
 import axios from "axios"
+import { useNavigate } from "react-router-dom";
+import Profileview from "./Profileview";
 const Profile = () => {
+  const navigate = useNavigate()
   const [profileImage,setprofileImage] = useState(null)
   const [technicalInput, setTechnicalInput] = useState("");
   const [technicalSkills, setTechnicalSkills] = useState([]);
@@ -86,7 +89,10 @@ const handleSubmit = async (e) => {
     localStorage.setItem("token", res.data.token); 
 
     alert("Profile Completed!");
+   
     console.log(res.data);
+     navigate("/Profileview");
+    
   } catch (err) {
     console.error("Backend Error:", err.response?.data || err.message);
   }

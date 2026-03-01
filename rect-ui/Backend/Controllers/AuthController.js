@@ -3,6 +3,7 @@ import Otp from "../models/Otp.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { sendotpEmail } from "../utils/sendEmail.js";
+import Profile from "../models/Profile.js";
 
 /* =========================
    REGISTER USER
@@ -27,18 +28,20 @@ export const RegisterUser = async (req, res) => {
             email,
             password: hashedPassword,
         });
+        
 
         // ✅ Generate JWT immediately on registration
-        const token = jwt.sign(
-            { id: user._id, email: user.email },
-            process.env.JWT_SECRET,
-            { expiresIn: "1d" }
-        );
+        // const token = jwt.sign(
+        //     { id: user._id, email: user.email },
+        //     process.env.JWT_SECRET,
+        //     { expiresIn: "1d" }
+        // );
+       
 
         res.status(201).json({
             success: true,
             message: "User registered successfully",
-            token, // ✅ Send token to frontend
+             // ✅ Send token to frontend
             user: {
                 id: user._id,
                 fullname: user.fullname,
@@ -87,54 +90,3 @@ export const loginUser = async (req, res) => {
     }
 };
 
-/* =========================
-   VERIFY OTP (GENERATE TOKEN)
-========================= */
-export const verifyOTP = async (req, res) => {
-    try {
-        const { email, otp } = req.body;
-
-        const otpRecord = await Otp.findOne({ email });
-        if (!otpRecord)
-            return res.status(400).json({ message: "OTP not found" });
-
-        if (otpRecord.otp !== otp)
-            return res.status(400).json({ message: "Invalid OTP" });
-
-        if (otpRecord.expiresAt < Date.now())
-            return res.status(400).json({ message: "OTP expired" });
-
-        await Otp.deleteMany({ email });
-
-        const user = await User.findOne({ email });
-
-        // ✅ TOKEN GENERATED ONLY AFTER OTP VERIFIED
-        const token = jwt.sign(
-            { id: user._id },
-            process.env.JWT_SECRET,
-            { expiresIn: "1d" }
-        );
-
-        res.status(200).json({
-            message: "OTP verified successfully",
-            token,
-            user: {
-                id: user._id,
-                fullname: user.fullname,
-                email: user.email,
-            },
-        });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-};
-
-
-export const getMe = async (req, res) => {
-    try {
-        const user = req.user; // comes from protect middleware
-        res.status(200).json({ user });
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
-};

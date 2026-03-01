@@ -1,6 +1,8 @@
 import React from 'react'
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
+import LogoutModal from "../Pages/Logout"
 
 
 import {
@@ -12,17 +14,21 @@ import {
   Settings,
   LogOut,
   Menu,
-  Moon,
+  ShieldCheck,
+  ShieldBan,
 } from "lucide-react";
 
 const Sidebar = () => {
+  const navigate = useNavigate()
+  const [showlogout , setlogout] =useState(false)
     const [open, setOpen] = useState(true);
     // const { toggletheme } = useContext(Themecontext);
-    const cards = [
-      { id: 1, title: "Total Interview", values: "10" },
-      { id: 2, title: "Feedbacks", values: "Positive" },
-      { id: 3, title: "Results", values: "8/10" },
-    ];
+     const handleLogout = () =>{
+        localStorage.removeItem("token")
+        localStorage.removeItem(User)
+        navigate("/login")
+      }
+    
 
     const menuItems = [
       { name: "Dashboard", icon: Home, path: "/" },
@@ -30,83 +36,97 @@ const Sidebar = () => {
       { name: "Results", icon: BarChart3, path: "/result" },
       { name: "Feedback", icon: MessageSquare, path: "/feedback" },
       { name: "Profile", icon: User, path: "/profile" },
+      { name: "Complete Profile", icon: ShieldCheck, path: "/Profileview" },
+      { name: "InComplete Profile", icon: ShieldBan, path: "/Profileview" },
     ];
 
     const bottomItems = [
       { name: "Settings", icon: Settings },
-      { name: "Logout", icon: LogOut },
+      { name: "Logout", icon: LogOut, isLogout : true },
     ];
 
   return (
-     <div className="flex min-h-screen bg-black text-white  border border-purple-300 rounded-2xl">
-      {/* Sidebar */}
-      <aside
-        className={`$${open ? "w-70" : "w-20"} bg-black/90 transition-all duration-300 flex flex-col justify-between`}
-      >
-        {/* Top */}
-        <div>
-          <div className="flex items-center justify-between  gap-12 px-4 py-4 border-b border-purple-800">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center font-bold">
-                AI
+    <>
+      <div className="flex min-h-screen bg-black text-white  border border-purple-300 rounded-2xl">
+        {/* Sidebar */}
+        <aside
+          className={`$${open ? "w-70" : "w-20"} bg-black/90 transition-all duration-300 flex flex-col justify-between`}
+        >
+          {/* Top */}
+          <div>
+            <div className="flex items-center justify-between  gap-12 px-4 py-4 border-b border-purple-800">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center font-bold">
+                  AI
+                </div>
+                {open && (
+                  <span className="text-lg font-semibold text-purple-400">
+                    TalkTo AI
+                  </span>
+                )}
               </div>
-              {open && (
-                <span className="text-lg font-semibold text-purple-400">
-                  TalkTo AI
-                </span>
-              )}
+              <Menu
+                className="cursor-pointer text-purple-400"
+                onClick={() => setOpen(!open)}
+              />
             </div>
-            <Menu
-              className="cursor-pointer text-purple-400"
-              onClick={() => setOpen(!open)}
-            />
+
+            {/* Menu */}
+            <ul className="mt-6 space-y-2 px-2">
+              {menuItems.map((item, i) => (
+                <NavLink
+                  to={item.path}
+                  key={i}
+                  className="group flex items-center gap-4 px-3 py-3 rounded-xl cursor-pointer hover:bg-purple-700/20"
+                >
+                  <item.icon className="text-purple-400" />
+                  {open && <span>{item.name}</span>}
+
+                  {/* Tooltip */}
+                  {!open && (
+                    <span className="absolute left-24 bg-purple-700 text-sm px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition">
+                      {item.name}
+                    </span>
+                  )}
+                </NavLink>
+              ))}
+            </ul>
           </div>
 
-          {/* Menu */}
-          <ul className="mt-6 space-y-2 px-2">
-            {menuItems.map((item, i) => (
-              <NavLink
-                to={item.path}
+          {/* Bottom */}
+          <ul className="mb-6 space-y-2 px-2">
+            {bottomItems.map((item, i) => (
+              <li
                 key={i}
                 className="group flex items-center gap-4 px-3 py-3 rounded-xl cursor-pointer hover:bg-purple-700/20"
+                onClick={() => {
+                  if (item.isLogout) setlogout(true);
+                }}
               >
                 <item.icon className="text-purple-400" />
                 {open && <span>{item.name}</span>}
 
-                {/* Tooltip */}
                 {!open && (
                   <span className="absolute left-24 bg-purple-700 text-sm px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition">
                     {item.name}
                   </span>
                 )}
-              </NavLink>
+              </li>
             ))}
           </ul>
-        </div>
-
-        {/* Bottom */}
-        <ul className="mb-6 space-y-2 px-2">
-          {bottomItems.map((item, i) => (
-            <li
-              key={i}
-              className="group flex items-center gap-4 px-3 py-3 rounded-xl cursor-pointer hover:bg-purple-700/20"
-            >
-              <item.icon className="text-purple-400" />
-              {open && <span>{item.name}</span>}
-
-              {!open && (
-                <span className="absolute left-24 bg-purple-700 text-sm px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition">
-                  {item.name}
-                </span>
-              )}
-            </li>
-          ))}
-        </ul>
-      </aside>
-         
-        </div>
-     
-       );
+        </aside>
+      </div>
+      <LogoutModal
+        isOpen={showlogout}
+        onClose={() => setlogout(false)}
+        onConfirm={handleLogout}
+      />
+    </>
+  );
+      
+       
        }
+       
+       
 
 export default Sidebar;

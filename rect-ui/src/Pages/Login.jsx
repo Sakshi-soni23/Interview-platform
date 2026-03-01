@@ -39,10 +39,10 @@ const Login = () => {
         return;
       }
 
-      setUserId(data.userId);
+      // ✅ ONLY THIS
       setShowOtpInput(true);
       alert("OTP sent to your email 📧");
-      
+    } catch (err) {
       alert("Server error ❌");
     } finally {
       setLoading(false);
@@ -68,14 +68,22 @@ const Login = () => {
 
       const data = await res.json();
 
-      if (!res.ok) {
+      // Use status instead of res.ok
+      if (res.status !== 200) {
         alert(data.message || "Invalid OTP");
         return;
       }
 
-      localStorage.setItem("token", data.token);
+      // 🔹 Save token to localStorage
+      if (data.token) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        console.log("Token stored:", data.token);
+      } else {
+        console.error("No token received from backend!");
+      }
       alert("Login successful 🎉");
-      navigate("/dashbaord");
+      navigate("/dashboard");
     } catch (err) {
       alert("Server error ❌");
     } finally {

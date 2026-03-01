@@ -11,6 +11,7 @@ import Result from "./Pages/Result.jsx"
 import Feedback from "./Pages/feedback.jsx"
 import Interview from './Pages/Interview.jsx'
 import UsageCalendar from './Pages/UsageCalender.jsx'
+import Profileview from "./Pages/Profileview.jsx"
 
 
 function App() {
@@ -19,17 +20,19 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Routes>
+       <Routes>
           <Route path="/" element={<Register />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/dashbaord" element={<Dashbaord />} />
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/dashboard" element={<Dashbaord />} />
+          <Route path="/Profile" element={<Profile />} />
           <Route path="/result" element={<Result />} />
           <Route path="/feedback" element={<Feedback />} />
           <Route path="/interview" element={<Interview />} />
           <Route path="/usage-calendar" element={<UsageCalendar />} />
-        </Routes>
+          <Route path="/Profileview" element={<Profileview/>}/> 
+        </Routes> 
+       
       </BrowserRouter>
     </>
   );

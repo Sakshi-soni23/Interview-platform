@@ -4,6 +4,8 @@ import User from "../models/User.js";
 const authMiddleware = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
+        console.log("AUTH HEADER:", req.headers.authorization);
+        console.log("ALL HEADERS:", req.headers);
 
         // ❌ No token
         if (!authHeader || !authHeader.startsWith("Bearer ")) {

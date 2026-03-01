@@ -1,11 +1,14 @@
 import Profile from "../models/Profile.js";
+import User from "../models/User.js";
 
 
+   
+    
 const createOrUpdateProfile = async (req, res) => {
     
 
     try {
-        const userId = req.user.id; // if using auth middleware
+        const userId = req.user._id; // if using auth middleware
 
         const {
             name,
@@ -49,7 +52,10 @@ const createOrUpdateProfile = async (req, res) => {
         } else {
             profile = await Profile.create(profileData);
         }
-
+        // ✅ FIX 2: update User.isCompleted
+        await User.findByIdAndUpdate(userId, {
+            isCompleted: true
+        });
         res.status(200).json({
             message: "Profile saved successfully",
             profile
@@ -57,6 +63,18 @@ const createOrUpdateProfile = async (req, res) => {
 
     } catch (error) {
         res.status(500).json({ error: error.message });
+    }
+};
+
+export const getProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.user._id).select(
+            "username email profile isCompleted"
+        );
+
+        res.json(user);
+    } catch (err) {
+        res.status(500).json({ message: err.message });
     }
 };
 export default createOrUpdateProfile ;
