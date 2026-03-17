@@ -78,12 +78,18 @@ const Login = () => {
       if (data.token) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        console.log("Token stored:", data.token);
+       
       } else {
         console.error("No token received from backend!");
       }
+      const loggedInUser = JSON.parse(localStorage.getItem("user"));
       alert("Login successful 🎉");
       navigate("/dashboard");
+      if (loggedInUser?.isCompleted) {
+        navigate("/viewprofile");
+      } else {
+        navigate("/profile");
+      }
     } catch (err) {
       alert("Server error ❌");
     } finally {

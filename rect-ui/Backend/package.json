@@ -14,10 +14,13 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.19.2",
+    "fs": "^0.0.1-security",
     "jsonwebtoken": "^9.0.3",
     "mongoose": "^8.1.1",
     "multer": "^2.0.2",
-    "nodemailer": "^7.0.12"
+    "nodemailer": "^7.0.12",
+    "pdf-parse": "^2.4.5",
+    "pdf-parser": "^1.0.5"
   },
   "devDependencies": {
     "nodemon": "^3.0.3"

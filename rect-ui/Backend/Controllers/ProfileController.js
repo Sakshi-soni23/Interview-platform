@@ -18,8 +18,6 @@ const createOrUpdateProfile = async (req, res) => {
             technicalSkills
         } = req.body;
 
-        const existingProfile = await Profile.findOne({ userId });
-
         const profileData = {
             userId,
             name,
@@ -41,18 +39,12 @@ const createOrUpdateProfile = async (req, res) => {
             profileData.resume = req.files.resume[0].path;
         }
 
-        let profile;
 
-        if (existingProfile) {
-            profile = await Profile.findOneAndUpdate(
-                { userId },
-                profileData,
-                { new: true }
-            );
-        } else {
-            profile = await Profile.create(profileData);
-        }
-        // ✅ FIX 2: update User.isCompleted
+        const profile = await Profile.findOneAndUpdate(
+            { userId },
+            { $set: profileData },
+            { new: true, upsert: true }
+        );
         await User.findByIdAndUpdate(userId, {
             isCompleted: true
         });
@@ -68,11 +60,10 @@ const createOrUpdateProfile = async (req, res) => {
 
 export const getProfile = async (req, res) => {
     try {
-        const user = await User.findById(req.user._id).select(
-            "username email profile isCompleted"
-        );
+        const user = await User.findById(req.user._id).select("-password");
+        const profile = await Profile.findOne({ userId: req.user._id });
 
-        res.json(user);
+        res.json({ user, profile }); // ✅ return both
     } catch (err) {
         res.status(500).json({ message: err.message });
     }

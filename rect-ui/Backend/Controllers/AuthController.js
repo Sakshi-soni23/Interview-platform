@@ -30,12 +30,7 @@ export const RegisterUser = async (req, res) => {
         });
         
 
-        // ✅ Generate JWT immediately on registration
-        // const token = jwt.sign(
-        //     { id: user._id, email: user.email },
-        //     process.env.JWT_SECRET,
-        //     { expiresIn: "1d" }
-        // );
+        
        
 
         res.status(201).json({

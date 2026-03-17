@@ -2,10 +2,18 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { IoMdArrowBack } from "react-icons/io";
 import { CiSettings } from "react-icons/ci";
+import { useNavigate } from "react-router-dom";
 
 const Profileview = () => {
+  const navigate = useNavigate()
   const [profile, setProfile] = useState(null);
+  const handleback = () =>{
+    navigate("/dashboard")
+  }
 
+const editprofile = ()=>{
+  navigate("/Profile")
+}
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -27,15 +35,20 @@ const Profileview = () => {
   }, []);
 
   if (!profile) {
-    return <p className="text-center mt-10 text-purple-700">Loading...</p>;
+    return <p className="text-center mt-10 text-purple-700">Loading...</p>
+    
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 bg-purple-100">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-purple-500">
       <div className="w-full max-w-xl bg-purple-800 rounded-2xl shadow-lg">
         {/* Top Bar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-purple-900">
-          <IoMdArrowBack size={24} className="text-white cursor-pointer" />
+          <IoMdArrowBack
+            size={24}
+            className="text-white cursor-pointer"
+            onClick={handleback}
+          />
           <h1 className="text-xl font-semibold text-white">My Profile</h1>
           <CiSettings size={24} className="text-white cursor-pointer" />
         </div>
@@ -61,10 +74,12 @@ const Profileview = () => {
           </div>
 
           {/* Right */}
-          <div className="text-white space-y-1">
-            <h2 className="text-xl font-semibold">{profile.username}</h2>
-            <p className="text-purple-200">{profile.email}</p>
-            <p className="italic">{profile.profile?.domain}</p>
+          <div className="text-white space-y-1 mt-5">
+            <h2 className=" text-xl font-sans uppercase ">
+              {profile.profile.name}
+            </h2>
+            <p className="text-purple-200 font-mono">{profile.profile.email}</p>
+            <p className="font-mono">{profile.profile?.domain}</p>
           </div>
         </div>
 
@@ -90,6 +105,9 @@ const Profileview = () => {
               View Resume
             </a>
           )}
+          <div className="mt-5" >
+            <button onClick={editprofile} type="button" className="border-2 border-black text-black rounded text-[16px] p-1 cursor-pointer bg-purple-600">Edit Profile</button>
+          </div>
         </div>
       </div>
     </div>

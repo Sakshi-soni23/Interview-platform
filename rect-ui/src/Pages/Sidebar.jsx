@@ -1,9 +1,7 @@
-import React from 'react'
-import { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
-import { useNavigate } from 'react-router-dom';
-import LogoutModal from "../Pages/Logout"
-
+import React, { useState } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+import LogoutModal from "../Pages/Logout";
+import { useProfile } from "../Context/ProfileContext";
 
 import {
   Home,
@@ -19,42 +17,51 @@ import {
 } from "lucide-react";
 
 const Sidebar = () => {
-  const navigate = useNavigate()
-  const [showlogout , setlogout] =useState(false)
-    const [open, setOpen] = useState(true);
-    // const { toggletheme } = useContext(Themecontext);
-     const handleLogout = () =>{
-        localStorage.removeItem("token")
-        localStorage.removeItem(User)
-        navigate("/login")
-      }
-    
+  
+  const navigate = useNavigate();
+  const { profile } = useProfile();
 
-    const menuItems = [
-      { name: "Dashboard", icon: Home, path: "/" },
-      { name: "AI Interviews", icon: Bot, path: "/interview" },
-      { name: "Results", icon: BarChart3, path: "/result" },
-      { name: "Feedback", icon: MessageSquare, path: "/feedback" },
-      { name: "Profile", icon: User, path: "/profile" },
-      { name: "Complete Profile", icon: ShieldCheck, path: "/Profileview" },
-      { name: "InComplete Profile", icon: ShieldBan, path: "/Profileview" },
-    ];
+  const [showLogout, setShowLogout] = useState(false);
+  const [open, setOpen] = useState(true);
 
-    const bottomItems = [
-      { name: "Settings", icon: Settings },
-      { name: "Logout", icon: LogOut, isLogout : true },
-    ];
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    navigate("/login");
+  };
+
+  /* ✅ Menu items
+     Profile does NOT have path
+     Path will be decided dynamically
+  */
+  const menuItems = [
+    { name: "Dashboard", icon: Home, path: "/" },
+    { name: "AI Interviews", icon: Bot, path: "/interview" },
+    { name: "Results", icon: BarChart3, path: "/result" },
+    { name: "Feedback", icon: MessageSquare, path: "/feedback" },
+    { name: "Profile", icon: User, isProfile: true },
+  ];
+
+  const bottomItems = [
+    { name: "Settings", icon: Settings },
+    { name: "Logout", icon: LogOut, isLogout: true },
+  ];
+  console.log("PROFILE FROM CONTEXT:", profile);
+  console.log("isCompleted value:", profile?.isCompleted);
+  console.log("Type:", typeof profile?.isCompleted);
 
   return (
     <>
-      <div className="flex min-h-screen bg-black text-white  border border-purple-300 rounded-2xl">
-        {/* Sidebar */}
+      <div className="flex min-h-screen bg-black text-white">
         <aside
-          className={`$${open ? "w-70" : "w-20"} bg-black/90 transition-all duration-300 flex flex-col justify-between`}
+          className={`${
+            open ? "w-72" : "w-20"
+          } bg-black/90 transition-all duration-300 flex flex-col justify-between border border-purple-300 rounded-2xl`}
         >
-          {/* Top */}
+          {/* ---------- TOP ---------- */}
           <div>
-            <div className="flex items-center justify-between  gap-12 px-4 py-4 border-b border-purple-800">
+            {/* Header */}
+            <div className="flex items-center justify-between px-4 py-4 border-b border-purple-800">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded-xl bg-purple-600 flex items-center justify-center font-bold">
                   AI
@@ -65,6 +72,7 @@ const Sidebar = () => {
                   </span>
                 )}
               </div>
+
               <Menu
                 className="cursor-pointer text-purple-400"
                 onClick={() => setOpen(!open)}
@@ -73,34 +81,51 @@ const Sidebar = () => {
 
             {/* Menu */}
             <ul className="mt-6 space-y-2 px-2">
-              {menuItems.map((item, i) => (
-                <NavLink
-                  to={item.path}
-                  key={i}
-                  className="group flex items-center gap-4 px-3 py-3 rounded-xl cursor-pointer hover:bg-purple-700/20"
-                >
-                  <item.icon className="text-purple-400" />
-                  {open && <span>{item.name}</span>}
+              {menuItems.map((item, i) => {
+                // ✅ Decide profile route dynamically
+                const profilePath = profile?.isCompleted
+                  ? "/Profileview"
+                  : "/profile";
 
-                  {/* Tooltip */}
-                  {!open && (
-                    <span className="absolute left-24 bg-purple-700 text-sm px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition">
-                      {item.name}
-                    </span>
-                  )}
-                </NavLink>
-              ))}
+                return (
+                  <NavLink
+                    key={i}
+                    to={item.isProfile ? profilePath : item.path}
+                    className="group flex items-center gap-4 px-3 py-3 rounded-xl hover:bg-purple-700/20"
+                  >
+                    <item.icon className="text-purple-400" />
+                    {open && <span>{item.name}</span>}
+
+                    {/* ✅ Status icon ONLY for Profile */}
+                    {open &&
+                      item.isProfile &&
+                      profile &&
+                      (profile.isCompleted ? (
+                        <ShieldCheck className="text-green-500 ml-auto" />
+                        ) : (
+                        <ShieldBan className="text-red-500 ml-auto" />
+                      ))}
+
+                    {/* Tooltip */}
+                    {!open && (
+                      <span className="absolute left-24 bg-purple-700 text-sm px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition">
+                        {item.name}
+                      </span>
+                    )}
+                  </NavLink>
+                );
+              })}
             </ul>
           </div>
 
-          {/* Bottom */}
+          {/* ---------- BOTTOM ---------- */}
           <ul className="mb-6 space-y-2 px-2">
             {bottomItems.map((item, i) => (
               <li
                 key={i}
                 className="group flex items-center gap-4 px-3 py-3 rounded-xl cursor-pointer hover:bg-purple-700/20"
                 onClick={() => {
-                  if (item.isLogout) setlogout(true);
+                  if (item.isLogout) setShowLogout(true);
                 }}
               >
                 <item.icon className="text-purple-400" />
@@ -116,17 +141,15 @@ const Sidebar = () => {
           </ul>
         </aside>
       </div>
+
+      {/* Logout Modal */}
       <LogoutModal
-        isOpen={showlogout}
-        onClose={() => setlogout(false)}
+        isOpen={showLogout}
+        onClose={() => setShowLogout(false)}
         onConfirm={handleLogout}
       />
     </>
   );
-      
-       
-       }
-       
-       
+};
 
 export default Sidebar;

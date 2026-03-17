@@ -24,4 +24,7 @@ router.post(
 );
 router.get("/getprofile",authMiddleware,getProfile)
 
+
+
+
 export default router;

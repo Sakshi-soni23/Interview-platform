@@ -4,7 +4,6 @@ import profile from "../assets/Images/profie.jpg";
 import { useState } from "react";
 import axios from "axios"
 import { useNavigate } from "react-router-dom";
-import Profileview from "./Profileview";
 const Profile = () => {
   const navigate = useNavigate()
   const [profileImage,setprofileImage] = useState(null)
@@ -86,7 +85,7 @@ const handleSubmit = async (e) => {
         },
       },
     );
-    localStorage.setItem("token", res.data.token); 
+   
 
     alert("Profile Completed!");
    
