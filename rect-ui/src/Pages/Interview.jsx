@@ -1,7 +1,12 @@
 import React from "react";
 import { motion } from "motion/react";
+import { useNavigate } from "react-router-dom";
 
 const Interview = () => {
+  const navigate = useNavigate()
+  const startbtn = () =>{
+    navigate("/interviewscreen")
+  }
   return (
     <div className="h-screen bg-purple-950 relative">
       {/* Title */}
@@ -87,7 +92,10 @@ const Interview = () => {
             // Will be used when gesture starts
             transition: { duration: 0.1 },
           }}
-          className="border-2 rounded-tl-2xl rounded-br-2xl p-2 font-mono hover:cursor-pointer bg-[#BBE0EF] shadow-[0_6px_20px_rgba(20,225,225,225)] "
+          whileTap={{
+            scale:0.9
+          }}
+          className="border-2 rounded-tl-2xl rounded-br-2xl p-2 font-mono hover:cursor-pointer bg-[#BBE0EF] shadow-[0_6px_20px_rgba(20,225,225,225)] " onClick={startbtn}
         >
           Start Interview
         </motion.button>

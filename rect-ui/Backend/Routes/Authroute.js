@@ -4,6 +4,7 @@ import { verifyOTP } from "../Controllers/Verification.js";
 import createOrUpdateProfile, { getProfile } from "../Controllers/ProfileController.js";
 import authMiddleware from "../Middleware/Authmiddleware.js";
 import upload from "../Middleware/multer.js";
+import { QuestionGenerate } from "../Controllers/Questioncontroller.js";
 
 
 const router = express.Router();
@@ -23,6 +24,7 @@ router.post(
     createOrUpdateProfile
 );
 router.get("/getprofile",authMiddleware,getProfile)
+router.post("/generate-questions",QuestionGenerate)
 
 
 

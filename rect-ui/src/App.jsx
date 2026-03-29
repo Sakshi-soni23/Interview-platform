@@ -12,6 +12,8 @@ import Feedback from "./Pages/feedback.jsx"
 import Interview from './Pages/Interview.jsx'
 import Profileview from "./Pages/Profileview.jsx"
 import { ProfileProvider} from './Context/ProfileContext.jsx'
+import Interviewscreen from './Pages/Interviewscreen.jsx'
+import "react-loading-skeleton/dist/skeleton.css";
 
 
 function App() {
@@ -31,6 +33,7 @@ function App() {
             <Route path="/feedback" element={<Feedback />} />
             <Route path="/interview" element={<Interview />} />
             <Route path="/Profileview" element={<Profileview />} />
+            <Route path='/interviewscreen' element={<Interviewscreen/>}/>
             
           </Routes>
         </BrowserRouter>
