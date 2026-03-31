@@ -1,10 +1,13 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, use } from "react";
 import { FaMicrophone } from "react-icons/fa";
 import interviewrobot from "../assets/Images/interviewrobot.png";
 
 const Interviewscreen = () => {
   const [answer, setAnswer] = useState("");
   const [Ques, setQues] = useState("Loading question...");
+  const [index,setindex] = useState(0)
+  const [questions, setQuestions] = useState([]);
+  const [Listenning,setListening] = useState(false)
   const recognitionRef = useRef(null);
 
   // 🔊 AI Speak Question
@@ -25,16 +28,26 @@ const Interviewscreen = () => {
           headers: {
             "Content-Type": "application/json",
           },
+          body: JSON.stringify({
+            resumetext: "your extracted resume text here",
+          }),
         },
       );
 
       const data = await res.json();
-      console.log("Question:", data.question);
+      console.log("Question:", data.questions);
+      const allQuestions = [
+        ...data.questions.hr,
+        ...data.questions.technical,
+        ...data.questions.project,
+      ];
 
-      setQues(data.question);
+      setQuestions(allQuestions);
+      setQues(allQuestions[0])
+      speak(allQuestions[0])
 
       setTimeout(() => {
-        speak(data.question);
+        speak(allQuestions[0]);
       }, 500);
     } catch (error) {
       console.log(error);
@@ -49,12 +62,13 @@ const Interviewscreen = () => {
 
     recognitionRef.current = new SpeechRecognition();
     recognitionRef.current.lang = "en-US";
-    recognitionRef.current.continuous = true;
+    recognitionRef.current.continuous = false;
 
     recognitionRef.current.onresult = (event) => {
       const transcript = event.results[event.results.length - 1][0].transcript;
 
       setAnswer((prev) => prev + " " + transcript);
+      setListening(false)
     };
 
     getQuestions();
@@ -63,12 +77,19 @@ const Interviewscreen = () => {
   // 🎤 Start Listening
   const startListening = () => {
     recognitionRef.current.start();
+    setListening(true)
+    
   };
 
   // ➡️ Next Question
   const nextQuestion = () => {
-    setAnswer("");
-    getQuestions();
+    if (index < questions.length - 1) {
+      const nextIndex = index + 1;
+      setindex(nextIndex);
+      setQues(questions[nextIndex]);
+      speak(questions[nextIndex]);
+      setAnswer("");
+    }
   };
 
   return (
@@ -103,10 +124,12 @@ const Interviewscreen = () => {
             {/* Mic Button */}
             <button
               onClick={startListening}
-              className="mt-3 flex items-center justify-center gap-2 bg-purple-600 hover:bg-purple-700 p-2 rounded-lg"
+              className={`mt-3 flex items-center justify-center gap-2 p-2 rounded-lg 
+  ${Listenning ? "bg-red-500 animate-pulse" : "bg-purple-600 hover:bg-purple-700"}`}
             >
               <FaMicrophone />
               Start Speaking
+              {Listenning ? "Listening..." : "Start Speaking"}
             </button>
           </div>
         </div>
